@@ -21,7 +21,7 @@ export const Ok = <T, E>(value: T): Result<T, E> => ({
         value,
     },
     isOk: () => true,
-    isErr: () => false,
+    isErr: () => value === undefined,
 })
 
 export const Err = <T, E>(error: E): Result<T, E> => ({
@@ -29,7 +29,7 @@ export const Err = <T, E>(error: E): Result<T, E> => ({
         value: {} as T,
     },
     Err: error,
-    isErr: () => true,
+    isErr: () => error !== undefined,
     isOk: () => false,
 })
 

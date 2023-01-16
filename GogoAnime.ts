@@ -1,6 +1,6 @@
 import { AnimeScraper, Episode, SearchResponse }from "./scraper"
 import Cheerio from "cheerio";
-import { Result, Ok, Err, GenericError, ConnectionError, NotFoundError } from "./errors";
+import { Result, Ok, Err, GenericError, NotFoundError } from "./errors";
 
 export default class GogoScraper extends AnimeScraper {
     
@@ -9,7 +9,7 @@ export default class GogoScraper extends AnimeScraper {
             "GogoAnime",
             "https://gogoanime.sk",
             true,
-            "1.1.1.1"
+            { "dns": "Cloudflare" }
         );
     }
 

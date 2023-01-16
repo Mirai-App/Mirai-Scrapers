@@ -65,18 +65,46 @@ export class Episode implements Episode {
     }
 }
 
+type DNS = {
+    name: string,
+    primary: {
+        ipv4: string,
+        ipv6: string
+    },
+    secondary?: {
+        ipv4: string,
+        ipv6: string
+    }
+}
+
 export interface GenericScraper {
     getName(): string,
     getHostUrl(): string,
     
-    setDNS(): void,
-    getDNS(): string | undefined,
+    getDNS(): DNS,
+    getDNSProvider(): string,
     fetch(query: string): Result<Response, GenericError>,
 
     encode(query: string): String,
 }
 
 export class GenericScraper implements GenericScraper {
+    static availableDNS: Map<string, DNS> = new Map<string, DNS>([
+        ["Cloudflare", {
+            name: "Cloudflare",
+            primary: {
+                ipv4: "1.1.1.1",
+                ipv6: "2606:4700:4700::1111"
+            }
+        }],
+        ["Google", {
+            name: "Google",
+            primary: {
+                ipv4: "8.8.8.8",
+                ipv6: "2001:4860:4860::8888"
+            }
+        }]
+    ]);
     static opts: Record<string, any> = {};
 
     constructor(
@@ -91,6 +119,20 @@ export class GenericScraper implements GenericScraper {
 
     getHostUrl(): string {
         return this.hostUrl;
+    }
+
+    static getDNS(): DNS {
+        return GenericScraper.availableDNS.get(this.opts["dns"]) ?? {
+            name: "Cloudflare",
+            primary: {
+                ipv4: "1.1.1.1",
+                ipv6: "2606:4700:4700::1111"
+            }
+        }
+    }
+
+    getDNSProvider(): string {
+        return GenericScraper.getDNS().name;
     }
 
     static fetch(query: string): Result<Promise<Response>, GenericError> {
@@ -110,22 +152,24 @@ export interface AnimeScraper extends GenericScraper {
 
 export class AnimeScraper extends GenericScraper implements AnimeScraper {
     static cache: Map<string, [Episode?] | SearchResponse>;
+    private currentDNS: DNS;
+
     constructor(
         name: string,
         hostUrl: string,
         protected isDubSeperate: boolean,
-        protected dns: string | undefined,
         opts: Record<string, any> = {},
     ) {
         super(name, hostUrl, opts);
         AnimeScraper.cache = new Map<string, [Episode] | SearchResponse>();
+        this.currentDNS = GenericScraper.getDNS();
     }
 
-    setDNS(): void {
-        throw new Error("Method not implemented.");
+    getDNS(): DNS {
+        return this.currentDNS;
     }
 
-    getDNS(): string {
-        return this.dns ?? "";
+    getDNSProvider(): string {
+        return this.currentDNS.name;
     }
 }
