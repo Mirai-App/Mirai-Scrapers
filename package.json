@@ -1,0 +1,7 @@
+{
+    "name": "AnimeScrapers",
+    "type": "commonjs",
+    "dependencies": {
+        "ts-node": "^10.9.1"
+    }
+}
