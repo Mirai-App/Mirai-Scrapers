@@ -8,13 +8,11 @@ export type Result<T, E> = {
     isErr: () => boolean,
 }
 
-// We want a matcher to extract the value from the result
-// and handle the error case
-export const match = <T, E, R>(result: Result<T, E>, onOk: (value: T) => R, onErr: (error: E) => R): R => {
-    if (result.Err) {
-        return onErr(result.Err);
+export const match = <T, E>(result: Result<T, E>, handlers: { Ok: (value: T) => T, Err: (error: E) => E }) => {
+    if (result.isOk()) {
+        return handlers.Ok(result.Ok.value);
     } else {
-        return onOk(result.Ok.value);
+        return handlers.Err(result.Err ?? {} as E);
     }
 }
 
@@ -62,7 +60,8 @@ export class GenericError {
 }
 
 export class ConnectionError extends GenericError {
-    constructor(description?: string) {
+
+    constructor(description: string) {
         const message = "Connection Error";
         const code = 1;
         const help = "Check your internet connection and try again";

@@ -17,5 +17,19 @@ import GogoScraper from "../GogoAnime";
         return;
     }
 
-    const episodes = scraper.loadEpisodes("https://gogoanime.sk/category/dragon-ball-super").then(console.log);   
+    const episodes = await scraper.loadEpisodes("https://gogoanime.sk/category/dragon-ball-super");
+    if (episodes.isErr()) {
+        // Check env variable to see if we should print the full error message
+        // NOTE: We can set the debug variable temporarily by running the script like this:
+        // DEBUG=true node ./tests/GogoAnime.test.ts
+
+        if (process.env.DEBUG) {
+            console.error(results.Err?.FullMessage());
+        } else {
+            console.error(results.Err?.UserFacingMessage());
+        }
+        return;
+    }
+
+    console.log(episodes);
 })();

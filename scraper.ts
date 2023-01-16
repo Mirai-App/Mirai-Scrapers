@@ -1,4 +1,4 @@
-import { Result, GenericError } from './errors'
+import { Result, GenericError, Ok } from './errors'
 type totalEpisodes = Number
 
 export interface SearchResponse {
@@ -65,31 +65,25 @@ export class Episode implements Episode {
     }
 }
 
-interface GenericScraper {
+export interface GenericScraper {
     getName(): string,
     getHostUrl(): string,
     
     setDNS(): void,
     getDNS(): string | undefined,
+    fetch(query: string): Result<Response, GenericError>,
 
     encode(query: string): String,
 }
 
-export interface AnimeScraper extends GenericScraper {
-    loadEpisodes(url: string): Promise<Result<[Episode?], GenericError>>,
-    search(query: string, dub?: boolean | undefined): Promise<Result<[SearchResponse?], GenericError>>,
-}
+export class GenericScraper implements GenericScraper {
+    static opts: Record<string, any> = {};
 
-export class AnimeScraper implements AnimeScraper {
-    static cache: Map<string, [Episode?] | SearchResponse>;
     constructor(
-        protected name: string,
-        protected hostUrl: string,
-        protected isDubSeperate: boolean,
-        protected dns: string | undefined,
-    ) {
-        AnimeScraper.cache = new Map<string, [Episode] | SearchResponse>();
-    }
+        private name: string,
+        private hostUrl: string,
+        private opts: Record<string, any>,
+    ) {}
 
     getName(): string {
         return this.name;
@@ -97,6 +91,34 @@ export class AnimeScraper implements AnimeScraper {
 
     getHostUrl(): string {
         return this.hostUrl;
+    }
+
+    static fetch(query: string): Result<Promise<Response>, GenericError> {
+        return Ok(fetch(query));
+    }
+
+
+    static encode(query: string): String {
+        return encodeURIComponent(query);
+    }
+}
+
+export interface AnimeScraper extends GenericScraper {
+    loadEpisodes(url: string): Promise<Result<[Episode?], GenericError>>,
+    search(query: string, dub?: boolean | undefined): Promise<Result<[SearchResponse?], GenericError>>,
+}
+
+export class AnimeScraper extends GenericScraper implements AnimeScraper {
+    static cache: Map<string, [Episode?] | SearchResponse>;
+    constructor(
+        name: string,
+        hostUrl: string,
+        protected isDubSeperate: boolean,
+        protected dns: string | undefined,
+        opts: Record<string, any> = {},
+    ) {
+        super(name, hostUrl, opts);
+        AnimeScraper.cache = new Map<string, [Episode] | SearchResponse>();
     }
 
     setDNS(): void {
