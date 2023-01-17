@@ -47,12 +47,14 @@ $ npx ts-node src/<SCRAPER NAME>.ts
 
 ```
 .
-|-- BaseScraper.ts
-|-- Anime
-|   |-- AnimeScraper.ts
-|   | <ANIME_SCRAPER_NAME>
-|       |-- <ANIME_SCRAPER_NAME>.ts
-|       |-- <ANIME_SCRAPER_NAME>.test.ts
+|-- src/
+|   |-- BaseScraper.ts
+|   |-- Errors.ts
+|   |-- Anime
+|       |-- AnimeScraper.ts
+|       | <ANIME_SCRAPER_NAME>
+|           |-- <ANIME_SCRAPER_NAME>.ts
+|           |-- <ANIME_SCRAPER_NAME>.test.ts
 |-- types/common
 |   |-- errors
 |       |-- index.d.ts

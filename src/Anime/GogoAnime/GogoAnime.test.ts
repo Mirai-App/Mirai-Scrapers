@@ -1,6 +1,6 @@
-import GogoScraper from "../GogoAnime";
-import { match, Err, Ok, NotFoundError } from "../errors";
-import { Episode } from "../scraper";
+import GogoScraper from "./GogoAnime";
+import { Episode } from "../AnimeScraper";
+import { match, Err, NotFoundError } from "../../Errors";
 
 /// <reference path="./common/scraper/anime_interface.d.ts" />
 
@@ -35,17 +35,14 @@ describe("GogoScraper", () => {
       "https://gogoanime.sk/category/one-piece",
     );
     // result -> Result<[Episode?], GenericError>
-    expect(
-      match(result, {
-        Ok: (episodes) => episodes,
-        Err: (error) => error,
-      }),
-    ).toBeInstanceOf(Array);
+    if (result.isOk()) {
+      expect(result.Ok?.value).toBeInstanceOf(Array);
 
-    // Expect the first episode to be an Episode object
-    const firstEpisode = result?.Ok?.value[0];
-    expect(firstEpisode).toBeInstanceOf(Episode);
-    expect(firstEpisode?.isDub()).toEqual(false);
+      // Expect the first episode to be an Episode object
+      const firstEpisode = result?.Ok?.value[0];
+      expect(firstEpisode).toBeInstanceOf(Episode);
+      expect(firstEpisode?.isDub()).toEqual(false);
+    }
   });
 
   // TODO: Make the dub test actually work

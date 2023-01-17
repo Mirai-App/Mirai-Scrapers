@@ -1,4 +1,4 @@
-import { GenericError, Ok } from "./errors";
+import GenericScraper from "../BaseScraper";
 
 export class Episode implements Episode {
   constructor(
@@ -43,66 +43,6 @@ export class Episode implements Episode {
 
   protected setDub(dub: boolean) {
     this.dub = dub;
-  }
-}
-
-export class GenericScraper implements GenericScraper {
-  static availableDNS: Map<string, DNS> = new Map<string, DNS>([
-    [
-      "Cloudflare",
-      {
-        name: "Cloudflare",
-        primary: {
-          ipv4: "1.1.1.1",
-          ipv6: "2606:4700:4700::1111",
-        },
-      },
-    ],
-    [
-      "Google",
-      {
-        name: "Google",
-        primary: {
-          ipv4: "8.8.8.8",
-          ipv6: "2001:4860:4860::8888",
-        },
-      },
-    ],
-  ]);
-  static opts: Record<string, any> = {};
-
-  constructor(private name: string, private hostUrl: string) {}
-
-  getName(): string {
-    return this.name;
-  }
-
-  getHostUrl(): string {
-    return this.hostUrl;
-  }
-
-  static getDNS(): DNS {
-    return (
-      GenericScraper.availableDNS.get(this.opts["dns"]) ?? {
-        name: "Cloudflare",
-        primary: {
-          ipv4: "1.1.1.1",
-          ipv6: "2606:4700:4700::1111",
-        },
-      }
-    );
-  }
-
-  getDNSProvider(): string {
-    return GenericScraper.getDNS().name;
-  }
-
-  static fetch(query: string): Result<Promise<Response>, GenericError> {
-    return Ok(fetch(query));
-  }
-
-  static encode(query: string): string {
-    return encodeURIComponent(query);
   }
 }
 
