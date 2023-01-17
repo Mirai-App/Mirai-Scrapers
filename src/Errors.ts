@@ -15,12 +15,14 @@ export const Ok = <T, E>(value: T): Result<T, E> => ({
   },
   isOk: () => true,
   isErr: () => value === undefined,
+  unwrap: () => value,
 });
 
 export const Err = <T, E>(error: E): Result<T, E> => ({
   Err: error,
   isErr: () => error !== undefined,
   isOk: () => false,
+  unwrap: () => ({} as T),
 });
 
 export class GenericError {

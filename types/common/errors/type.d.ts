@@ -6,4 +6,5 @@ type Result<T, E> = {
 
   isOk: () => boolean;
   isErr: () => boolean;
+  unwrap: () => T;
 };
