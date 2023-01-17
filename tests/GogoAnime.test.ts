@@ -1,6 +1,9 @@
 import GogoScraper from "../GogoAnime";
 import { match } from "../errors";
+import { match, Err, Ok, NotFoundError } from "../errors";
 import { Episode } from "../scraper";
+
+/// <reference path="./common/scraper/anime_interface.d.ts" />
 
 // Use jest to test the GogoScraper class
 describe("GogoScraper", () => {

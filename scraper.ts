@@ -1,22 +1,4 @@
-import { Result, GenericError, Ok } from './errors'
-type totalEpisodes = Number
-
-export interface SearchResponse {
-    title: string,
-    link: string,
-    posterUrl: string,
-
-    totalEpisodes?: totalEpisodes,
-    isMovie?: boolean, // If it's a movie, totalEpisodes will be 1
-}
-
-export interface Episode {
-    getTitle(): string,
-    getLink(): string,
-    getDescription(): string | undefined,
-    getEpisodeNumber(): Number,
-    isDub(): boolean,
-}
+import { GenericError, Ok } from "./errors";
 
 export class Episode implements Episode {
 
@@ -65,27 +47,6 @@ export class Episode implements Episode {
     }
 }
 
-type DNS = {
-    name: string,
-    primary: {
-        ipv4: string,
-        ipv6: string
-    },
-    secondary?: {
-        ipv4: string,
-        ipv6: string
-    }
-}
-
-export interface GenericScraper {
-    getName(): string,
-    getHostUrl(): string,
-    
-    getDNS(): DNS,
-    getDNSProvider(): string,
-    fetch(query: string): Result<Response, GenericError>,
-
-    encode(query: string): String,
 }
 
 export class GenericScraper implements GenericScraper {
@@ -145,9 +106,6 @@ export class GenericScraper implements GenericScraper {
     }
 }
 
-export interface AnimeScraper extends GenericScraper {
-    loadEpisodes(url: string): Promise<Result<[Episode?], GenericError>>,
-    search(query: string, dub?: boolean | undefined): Promise<Result<[SearchResponse?], GenericError>>,
 }
 
 export class AnimeScraper extends GenericScraper implements AnimeScraper {

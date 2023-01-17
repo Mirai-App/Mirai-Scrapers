@@ -1,13 +1,3 @@
-export type Result<T, E> = {
-    Ok: {
-        value: T,
-    },
-    Err?: E
-    
-    isOk: () => boolean,
-    isErr: () => boolean,
-}
-
 export const match = <T, E>(result: Result<T, E>, handlers: { Ok: (value: T) => T, Err: (error: E) => E }) => {
     if (result.isOk()) {
         return handlers.Ok(result.Ok.value);
