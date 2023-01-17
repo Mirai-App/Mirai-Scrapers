@@ -1,6 +1,6 @@
 import { GenericError, Ok } from "./Errors";
 
-export default class GenericScraper implements GenericScraper {
+export default abstract class GenericScraper implements GenericScraper {
   static availableDNS: Map<string, DNS> = new Map<string, DNS>([
     [
       "Cloudflare",
@@ -23,6 +23,7 @@ export default class GenericScraper implements GenericScraper {
       },
     ],
   ]);
+
   // TODO: Define a list of acceptable keys and values
   static opts: Record<string, any> = {};
 
@@ -58,5 +59,25 @@ export default class GenericScraper implements GenericScraper {
 
   static encode(query: string): string {
     return encodeURIComponent(query);
+  }
+}
+
+export abstract class ScrapeResult implements ScrapeResult {
+  constructor(
+    private title: string,
+    private link: string,
+    private description?: string,
+  ) {}
+
+  getTitle(): string {
+    return this.title;
+  }
+
+  getLink(): string {
+    return this.link;
+  }
+
+  getDescription(): string {
+    return this.description ?? "";
   }
 }

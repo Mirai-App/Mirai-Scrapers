@@ -14,11 +14,3 @@ interface GenericScraper {
 
   encode(query: string): string;
 }
-
-interface AnimeScraper extends GenericScraper {
-  loadEpisodes(url: string): Promise<Result<[Episode?], GenericError>>;
-  search(
-    query: string,
-    dub?: boolean | undefined,
-  ): Promise<Result<[SearchResponse?], GenericError>>;
-}

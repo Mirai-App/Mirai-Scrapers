@@ -10,14 +10,6 @@ export default class GogoScraper extends AnimeScraper {
     super("GogoAnime", "https://gogoanime.sk", true, { dns: "Cloudflare" });
   }
 
-  getName(): string {
-    return super.getName();
-  }
-
-  getHostUrl(): string {
-    return super.getHostUrl();
-  }
-
   async loadEpisodes(url: string): Promise<Result<[Episode?], GenericError>> {
     const episodes: [Episode?] = [];
 
@@ -78,7 +70,7 @@ export default class GogoScraper extends AnimeScraper {
         title,
         super.getHostUrl() + link,
         undefined,
-        parseInt(title.split(" ")[1], 10),
+        parseInt(title.split(" ")[1].trim(), 10),
       );
 
       episodes.push(episode);

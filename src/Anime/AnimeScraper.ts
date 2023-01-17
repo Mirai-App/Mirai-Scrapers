@@ -1,32 +1,16 @@
-import GenericScraper from "../BaseScraper";
+import GenericScraper, { ScrapeResult } from "../BaseScraper";
+import { GenericError } from "../Errors";
 
-export class Episode implements Episode {
+export class Episode extends ScrapeResult {
   constructor(
-    private title: string,
-    private link: string,
-    private description: string | undefined,
+    // First 3 parameters are inherited from ScrapeResult
+    title: string,
+    link: string,
+    description: string | undefined,
     private episodeNumber: number,
     private dub?: boolean,
-  ) {}
-
-  getTitle(): string {
-    return this.title;
-  }
-
-  protected setTitle(title: string) {
-    this.title = title;
-  }
-
-  getLink(): string {
-    return this.link;
-  }
-
-  getDescription(): string {
-    return this.description ?? "";
-  }
-
-  protected setDescription(description: string) {
-    this.description = description;
+  ) {
+    super(title, link, description);
   }
 
   getEpisodeNumber(): number {
@@ -46,7 +30,10 @@ export class Episode implements Episode {
   }
 }
 
-export class AnimeScraper extends GenericScraper implements AnimeScraper {
+export abstract class AnimeScraper
+  extends GenericScraper
+  implements AnimeScraper
+{
   static cache: Map<string, [Episode?] | SearchResponse>;
   private currentDNS: DNS;
 
@@ -61,11 +48,9 @@ export class AnimeScraper extends GenericScraper implements AnimeScraper {
     this.currentDNS = GenericScraper.getDNS();
   }
 
-  getDNS(): DNS {
-    return this.currentDNS;
-  }
-
-  getDNSProvider(): string {
-    return this.currentDNS.name;
-  }
+  abstract loadEpisodes(url: string): Promise<Result<[Episode?], GenericError>>;
+  abstract search(
+    query: string,
+    dub?: boolean | undefined,
+  ): Promise<Result<[SearchResponse?], GenericError>>;
 }
