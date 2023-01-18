@@ -1,4 +1,4 @@
-declare interface SearchResponse {
+declare interface GenericSearchResponse {
   title: string;
   link: string;
   posterUrl: string;

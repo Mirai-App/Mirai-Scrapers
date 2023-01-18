@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../../types/common/scraper/anime_interface.d.ts">
 
-import { AnimeScraper, Episode } from "../AnimeScraper";
+import { AnimeScraper, Episode, SearchResponse } from "../AnimeScraper";
 import { load } from "cheerio";
 import { Ok, Err, GenericError, NotFoundError } from "../../Errors";
 

@@ -1,6 +1,10 @@
 import GenericScraper, { ScrapeResult } from "../BaseScraper";
 import { GenericError } from "../Errors";
 
+export interface SearchResponse extends GenericSearchResponse {
+  fullColor?: boolean;
+}
+
 export class Chapter extends ScrapeResult {
   constructor(
     // First 3 parameters are inherited from ScrapeResult
