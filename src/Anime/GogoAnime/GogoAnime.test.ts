@@ -62,22 +62,17 @@ describe("GogoScraper", () => {
       return episodes.Err;
     }
 
-    expect(episodes?.Ok?.value[0]?.isDub()).toEqual(true);
+    expect(episodes.unwrap()[0]?.isDub()).toEqual(true);
   });
 
   // Test the search() method
   test("search()", async () => {
     // Expect the result to be an array
     const result = await scraper.search("One Piece");
-    expect(
-      match(result, {
-        Ok: (results) => results,
-        Err: (error) => error,
-      }),
-    ).toBeInstanceOf(Array);
+    expect(result.unwrap()).toBeInstanceOf(Array);
 
     // Expect the first result to be an object
-    const firstResult = result?.Ok?.value[0];
+    const firstResult = result.unwrap()[0];
     expect(firstResult).toBeInstanceOf(Object);
   });
 
