@@ -76,6 +76,13 @@ describe("GogoScraper", () => {
     expect(firstResult).toBeInstanceOf(Object);
   });
 
+  test("Non-existent anime", async () => {
+    const result = await scraper.search(
+      crypto.getRandomValues(new Uint32Array(1)).toString(),
+    );
+    expect(result.isErr()).toBe(true);
+  });
+
   // Test the cache
   test("cache", async () => {
     // We have to clear the cache before we can test it
