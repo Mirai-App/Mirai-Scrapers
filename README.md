@@ -85,3 +85,9 @@ If you would like to contribute, please make a pull request / issue.
 ### License
 
 This project is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
+
+## Todo
+
+- [ ] Implement AniList login
+  - Help for the auth can be found [here](https://anilist.gitbook.io/anilist-apiv2-docs/overview/oauth/implicit-grant)
+  - and GraphQL types [here](https://anilist.github.io/ApiV2-GraphQL-Docs/)
