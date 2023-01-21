@@ -1,4 +1,4 @@
-import { GenericError, Ok } from "./Errors";
+import { ConnectionError, Err, GenericError, Ok } from "./Errors";
 
 export default abstract class GenericScraper implements GenericScraper {
   static availableDNS: Map<string, DNS> = new Map<string, DNS>([
@@ -27,7 +27,9 @@ export default abstract class GenericScraper implements GenericScraper {
   // TODO: Define a list of acceptable keys and values
   static opts: Record<string, any> = {};
 
-  constructor(private name: string, private hostUrl: string) {}
+  constructor(private name: string, private hostUrl: string) {
+    GenericScraper.opts["hostUrl"] = hostUrl;
+  }
 
   getName(): string {
     return this.name;
@@ -53,8 +55,27 @@ export default abstract class GenericScraper implements GenericScraper {
     return GenericScraper.getDNS().name;
   }
 
-  static fetch(query: string): Result<Promise<Response>, GenericError> {
-    return Ok(fetch(query));
+  static fetch(query: string): Promise<Result<Response, GenericError>> {
+    return new Promise((resolve, reject) => {
+      // const dns = GenericScraper.getDNS();
+      fetch(query)
+        .then((response) => {
+          if (response.ok) {
+            resolve(Ok(response));
+          } else {
+            reject(
+              Err(
+                new ConnectionError(
+                  `Failed to connect to ${this.opts["hostUrl"]}.`,
+                ),
+              ),
+            );
+          }
+        })
+        .catch((error) => {
+          reject(Err(new ConnectionError(error.message)));
+        });
+    });
   }
 
   static encode(query: string): string {

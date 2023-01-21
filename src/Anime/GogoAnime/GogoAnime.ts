@@ -20,12 +20,13 @@ export default class GogoScraper extends AnimeScraper {
       }
     }
 
-    const response = AnimeScraper.fetch(url);
+    const response = await AnimeScraper.fetch(url);
     if (response.isErr()) {
-      return Err(response.Err as GenericError);
+      console.error(response.Err?.UserFacingMessage());
+      return Err(new NotFoundError("Anime not found"));
     }
 
-    const html = await response?.Ok?.value?.then((res: Response) => res.text());
+    const html = await response.unwrap().text();
     if (html === undefined) {
       return Err(new NotFoundError("Anime not found"));
     }
@@ -45,13 +46,8 @@ export default class GogoScraper extends AnimeScraper {
     const episodeList = AnimeScraper.fetch(
       `${super.getHostUrl()}/load-list-episode?ep_start=0&ep_end=${totalEpisodes}&id=${animeID}`,
     );
-    if (episodeList.isErr()) {
-      return Err(episodeList.Err as GenericError);
-    }
 
-    const episodeListHTML = await episodeList?.Ok?.value?.then(
-      (res: Response) => res.text(),
-    );
+    const episodeListHTML = await (await episodeList).unwrap().text();
 
     if (episodeListHTML === undefined) {
       return Err(new NotFoundError("Anime not found"));
@@ -97,8 +93,8 @@ export default class GogoScraper extends AnimeScraper {
       }
     }
 
-    const response = AnimeScraper.fetch(url);
-    const html = await (await response?.Ok?.value)?.text();
+    const response = await AnimeScraper.fetch(url);
+    const html = await response.unwrap().text();
 
     if (html === undefined) return Err(new NotFoundError("Anime not found"));
 
@@ -112,14 +108,19 @@ export default class GogoScraper extends AnimeScraper {
 
       if (!title || !link || !posterUrl) return Err(NotFoundError);
 
-      responses.push({
+      const response: SearchResponse = {
         title,
         link: this.getHostUrl() + link,
         posterUrl,
         isDub: dub ? dub : false,
-      });
+      };
+      responses.push(response);
+
+      AnimeScraper.cache.set(url, response);
     });
 
+    if (responses.length === 0)
+      return Err(new NotFoundError("Anime not found"));
     return Ok(responses);
   }
 }
